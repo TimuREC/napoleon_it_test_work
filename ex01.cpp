@@ -6,9 +6,12 @@
 
 Пример:
 Входные данные:
-Cтрока: "[Programming [langu[age]]] is the most popular programming language [today]",
-подстрока: "Javascript". Выходные данные: "Javascript is the most popular programming language [today]".
+строка: "[Programming [langu[age]]] is the most popular programming language [today]",
+подстрока: "Javascript".
 
+Выходные данные: "Javascript is the most popular programming language [today]".
+
+Команда для компиляции:
 g++ -std=c++1z ex01.cpp
 */
 

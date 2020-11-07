@@ -6,13 +6,33 @@ import Foundation
  –   Performance optimizations are optional
  */
 
-struct Book {
+struct Book: Hashable {
     let id: String; // unique identifier
     let name: String;
     let author: String;
+    var hash: Int {
+        return self.id.hash
+    }
+}
+
+extension Book: Equatable {
+    static func == (left: Book, right: Book) -> Bool {
+        return (left.id == right.id)
+    }
+}
+
+extension Book: Comparable {
+    static func < (left: Book, right: Book) -> Bool {
+        return (left.author < right.author)
+    }
 }
 
 class Library {
+    var base: Array = [Book]();
+    
+    init() {
+        
+    }
     
     /**
      Adds a new book object to the Library.
@@ -20,7 +40,11 @@ class Library {
      - Returns: false if the book with same id already exists in the Library, true – otherwise.
      */
     func addNewBook(book: Book) -> Bool {
-        return <#T##Bool#>
+        if base.contains(book) {
+            return false
+        }
+        base.append(book)
+        return true
     }
     
     /**
@@ -28,21 +52,67 @@ class Library {
      - Returns: true if the book with same id existed in the Library, false – otherwise.
      */
     func deleteBook(id: String) -> Bool {
-        return <#T##Bool#>
+        for (index, item) in base.enumerated() {
+            if (item.id == id) {
+                base.remove(at: index)
+                return true
+            }
+        }
+        return false
     }
     
     /**
      - Returns: 10 book names containing the specified string. If there are several books with the same name, author's name is appended to book's name (e.g. Author - Book).
      */
     func listBooksByName(searchString: String) -> [String] {
-        return <#T##[String]#>
+        var res = Set<Book>()
+        for item in base {
+            if (item.name.contains(searchString)) {
+                res.insert(item)
+            }
+        }
+        var sortedRes = res.sorted()
+        var authors = Dictionary<String, Int>()
+        for (index, item) in sortedRes.enumerated() {
+            if (index < 10) {
+                if (authors[item.name] != nil) {
+                    authors[item.name]! += 1
+                } else {
+                    authors[item.name] = 1
+                }
+            } else {
+                sortedRes.remove(at: index)
+            }
+        }
+        var answer: Array = [String]()
+        for item in sortedRes {
+            if (authors[item.name]! > 1) {
+                answer.append(item.author + " - " + item.name)
+            } else {
+                answer.append(item.name)
+            }
+        }
+        return answer
     }
     
     /**
      - Returns: 10 book names whose author contains the specified string, ordered by authors.
      */
     func listBooksByAuthor(searchString: String) -> [String] {
-        return <#T##[String]#>
+        var res = Set<Book>()
+        for item in base {
+            if (item.author.contains(searchString)) {
+                res.insert(item)
+            }
+        }
+        let sortedRes = res.sorted()
+        var answer: Array = [String]()
+        for (index, item) in sortedRes.enumerated() {
+            if (index < 10) {
+                answer.append(item.name)
+            }
+        }
+        return answer
     }
     
 }
@@ -89,3 +159,6 @@ func test(lib: Library) {
     
     print("Test successfully passed")
 }
+
+//var z = Library()
+//test(lib: z)
